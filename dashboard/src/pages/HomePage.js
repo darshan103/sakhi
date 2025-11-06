@@ -1,50 +1,49 @@
 import React, { useState, useEffect } from "react";
 import Layout from "./../components/Layout/Layout";
 import axios from "axios";
-import { Checkbox, Radio } from "antd";
-import { Prices } from "../components/Prices";
-import {useNavigate} from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 const HomePage = () => {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [checked, setChecked] = useState([]);
-  const [radio, setRadio] = useState([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
 
-  //get all catetories
-  const getAllCategory = async () => {
-    try {
-      const { data } = await axios.get("/api/v1/category/get-category");
-      if (data?.success) {
-        setCategories(data?.category);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  useEffect(() => {
-    getAllCategory();
-    getTotal();
-  }, []);
+  // ✅ Static fallback products
+  const staticProducts = [
+    {
+      _id: "1",
+      name: "Solar Panel 200W",
+      description: "High-efficiency monocrystalline solar panel.",
+      price: 7500,
+      slug: "solar-panel-200w",
+      photo:
+        "https://cdn.thewirecutter.com/wp-content/media/2023/03/portable-solar-panels-2048px-goalzero-boulder100briefcase.jpg",
+    },
+    {
+      _id: "2",
+      name: "Smart Inverter 5KVA",
+      description:
+        "Powerful inverter with Wi-Fi control and battery management.",
+      price: 14999,
+      slug: "smart-inverter-5kva",
+      photo:
+        "https://cdn.thewirecutter.com/wp-content/media/2022/09/powerinverters-2048px-jackeryexplorer1500-inverter.jpg",
+    },
+    {
+      _id: "3",
+      name: "Lithium Battery Pack",
+      description:
+        "Long-lasting 12V 100Ah lithium battery for home and RV use.",
+      price: 21000,
+      slug: "lithium-battery-pack",
+      photo:
+        "https://5.imimg.com/data5/SELLER/Default/2023/1/AN/MB/TP/57049600/lithium-battery-pack-1000x1000.jpg",
+    },
+  ];
 
-  //get all products
-  const getAllProducts = async () => {
-    try {
-      setLoading(true);
-      const { data } = await axios.get(`/api/v1/product/product-list/${page}`);
-      setLoading(false);
-      setProducts(data.products);
-    } catch (error) {
-      setLoading(false);
-      console.log(error);
-    }
-  };
-
-  //getTOtal COunt
+  // ✅ Fetch Total Product Count
   const getTotal = async () => {
     try {
       const { data } = await axios.get("/api/v1/product/product-count");
@@ -54,125 +53,114 @@ const HomePage = () => {
     }
   };
 
-  useEffect(() => {
-    if (page === 1) return;
-    loadMore();
-  }, [page]);
+  // ✅ Fetch All Products
+  const getAllProducts = async () => {
+    try {
+      setLoading(true);
+      const { data } = await axios.get(`/api/v1/product/product-list/${page}`);
+      setLoading(false);
+      if (data?.products?.length) setProducts(data.products);
+      else setProducts(staticProducts);
+    } catch (error) {
+      setLoading(false);
+      setProducts(staticProducts);
+      console.log(error);
+    }
+  };
 
-  //load more
+  // ✅ Load More
   const loadMore = async () => {
     try {
       setLoading(true);
       const { data } = await axios.get(`/api/v1/product/product-list/${page}`);
       setLoading(false);
-      setProducts([...products, ...data?.products]);
+      setProducts([...products, ...(data?.products || [])]);
     } catch (error) {
-      console.log(error);
       setLoading(false);
-    }
-  };
-
-  // filter by category
-  const handleFilter = (value, id) => {
-    let all = [...checked];
-    if (value) {
-      all.push(id);
-    } else {
-      all = all.filter((c) => c !== id);
-    }
-    setChecked(all);
-  };
-  useEffect(() => {
-    if (!checked.length || !radio.length) getAllProducts();
-  }, [checked.length, radio.length]);
-
-  useEffect(() => {
-    if (checked.length || radio.length) filterProduct();
-  }, [checked, radio]);
-
-  //get filterd product
-  const filterProduct = async () => {
-    try {
-      const { data } = await axios.post("/api/v1/product/product-filters", {
-        checked,
-        radio,
-      });
-      setProducts(data?.products);
-    } catch (error) {
       console.log(error);
     }
   };
+
+  // ✅ Setup
+  useEffect(() => {
+    getTotal();
+    getAllProducts();
+  }, []);
+
+  useEffect(() => {
+    if (page !== 1) loadMore();
+  }, [page]);
+
   return (
-    <Layout title={"ALl Products - Best offers "}>
-      <div className="row mt-3">
-        <div className="col-md-2">
-          <h4 className="text-center">Filter By Category</h4>
-          <div className="d-flex flex-column">
-            {categories?.map((c) => (
-              <Checkbox
-                key={c._id}
-                onChange={(e) => handleFilter(e.target.checked, c._id)}
-              >
-                {c.name}
-              </Checkbox>
-            ))}
-          </div>
-          {/* price filter */}
-          <h4 className="text-center mt-4">Filter By Price</h4>
-          <div className="d-flex flex-column">
-            <Radio.Group onChange={(e) => setRadio(e.target.value)}>
-              {Prices?.map((p) => (
-                <div key={p._id}>
-                  <Radio value={p.array}>{p.name}</Radio>
-                </div>
-              ))}
-            </Radio.Group>
-          </div>
-          <div className="d-flex flex-column">
-            <button
-              className="btn btn-danger"
-              onClick={() => window.location.reload()}
-            >
-              RESET FILTERS
-            </button>
-          </div>
+    <Layout title="All Products - Best Offers">
+      <div className="container py-5">
+        {/* Section Header */}
+        <div className="text-center mb-5">
+          <h2 className="fw-bold text-uppercase">
+            <i className="bi bi-stars text-warning me-2"></i>Our Products
+          </h2>
+          <p className="text-muted mb-0">
+            Explore top deals and trending solar equipment
+          </p>
         </div>
-        <div className="col-md-9">
-          <h1 className="text-center">Products</h1>
-          <div className="d-flex flex-wrap">
-            {products?.map((p) => (
-              <div className="card m-2" style={{ width: "18rem" }}>
-                <img
-                  src={`/api/v1/product/product-photo/${p._id}`}
-                  className="card-img-top"
-                  alt={p.name}
-                />
-                <div className="card-body">
-                  <h5 className="card-title">{p.name}</h5>
-                  <p className="card-text">
-                    {p.description.substring(0, 30)}...
+
+        {/* Product Grid */}
+        <div className="row g-4 justify-content-center">
+          {products?.map((p) => (
+            <div
+              className="col-12 col-sm-6 col-md-4 col-lg-3"
+              key={p._id}
+            >
+              <div className="card h-100 shadow-sm border-0 product-card">
+                <div className="position-relative">
+                  <img
+                    src={p.photo || `/api/v1/product/product-photo/${p._id}`}
+                    className="card-img-top rounded-top"
+                    alt={p.name}
+                    style={{ height: "200px", objectFit: "cover" }}
+                  />
+                  <span className="badge bg-warning text-dark position-absolute top-0 end-0 m-2">
+                    New
+                  </span>
+                </div>
+                <div className="card-body d-flex flex-column">
+                  <h6 className="card-title fw-bold">{p.name}</h6>
+                  <p className="card-text text-muted small flex-grow-1">
+                    {p.description?.substring(0, 60)}...
                   </p>
-                  <p className="card-text"> Rs {p.price}</p>
-                  <button class="btn btn-primary ms-1" 
-                  onClick={()=>navigate(`/product/${p.slug}`)}>More Details</button>
-                  <button class="btn btn-secondary ms-1">ADD TO CART</button>
+                  <h6 className="text-success fw-bold mb-3">
+                    ₹ {p.price.toLocaleString()}
+                  </h6>
+                  <div className="d-flex justify-content-between">
+                    <button
+                      className="btn btn-sm btn-outline-primary w-50 me-1"
+                      onClick={() => navigate(`/product/${p.slug}`)}
+                    >
+                      Details
+                    </button>
+                    <button className="btn btn-sm btn-primary w-50 ms-1">
+                      <i className="bi bi-cart-plus me-1"></i> Add
+                    </button>
+                  </div>
                 </div>
               </div>
-            ))}
-          </div>
-          <div className="m-2 p-3">
-            {products && products.length < total && (
-              <button
-                className="btn btn-warning"
-                onClick={(e) => {
-                  e.preventDefault();
-                  setPage(page + 1);
-                }}
-              >
-                {loading ? "Loading ..." : "Loadmore"}
-              </button>
-            )}
-          </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Load More */}
+        <div className="text-center mt-5">
+          {products && products.length < total && (
+            <button
+              className="btn btn-warning px-4 py-2 fw-semibold"
+              onClick={(e) => {
+                e.preventDefault();
+                setPage(page + 1);
+              }}
+            >
+              {loading ? "Loading..." : "Load More"}
+            </button>
+          )}
         </div>
       </div>
     </Layout>

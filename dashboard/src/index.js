@@ -8,6 +8,9 @@ import { AuthProvider } from './context/auth';
 import { SearchProvider } from './context/Search';
 import 'antd/dist/reset.css';
 
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.bundle.min.js";
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <AuthProvider>
