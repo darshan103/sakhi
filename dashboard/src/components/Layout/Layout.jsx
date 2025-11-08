@@ -3,6 +3,7 @@ import Header from './Header';
 import Footer from './Footer'
 import {Helmet} from 'react-helmet'
 import { Toaster } from 'react-hot-toast';
+import Corousel from './Corousel';
 
 const Layout = ({children,title,description,keywords,author}) => {
   return (
@@ -15,20 +16,20 @@ const Layout = ({children,title,description,keywords,author}) => {
         <title>{title}</title>
       </Helmet>
         <Header/>
+        <Corousel/>
         <main style={{minHeight:"72vh"}}>
             {children}
             <Toaster />
         </main>
         <Footer/>
-        
     </div>
   );
 };
 
 Layout.defaultProps = {
-  title:"Sakhi",
+  title:"Handiwork",
   description:"a empowering platform",
-  keywords:"sakhi,mern,node,mongodb",
+  keywords:"handiwork,mern,node,mongodb",
   author:"Darshan Singh",
 }
 

@@ -41,6 +41,16 @@ const HomePage = () => {
       photo:
         "https://5.imimg.com/data5/SELLER/Default/2023/1/AN/MB/TP/57049600/lithium-battery-pack-1000x1000.jpg",
     },
+    {
+      _id: "4",
+      name: "Lithium Battery Pack",
+      description:
+        "Long-lasting 12V 100Ah lithium battery for home and RV use.",
+      price: 21000,
+      slug: "lithium-battery-pack",
+      photo:
+        "https://5.imimg.com/data5/SELLER/Default/2023/1/AN/MB/TP/57049600/lithium-battery-pack-1000x1000.jpg",
+    }
   ];
 
   // ✅ Fetch Total Product Count
