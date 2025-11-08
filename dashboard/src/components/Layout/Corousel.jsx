@@ -29,7 +29,7 @@ const Corousel = () => {
   return (
     <div
       id="productCarousel"
-      className="carousel slide mb-5 shadow-sm rounded"
+      className="container carousel slide"
       data-bs-ride="carousel"
     >
       {/* Indicators */}
@@ -48,7 +48,7 @@ const Corousel = () => {
       </div>
 
       {/* Slides */}
-      <div className="carousel-inner rounded">
+      <div className="carousel-inner">
         {slides.map((slide, i) => (
           <div
             key={slide.id}
