@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Layout from "./../components/Layout/Layout";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import cardImg01 from "../assests/images/cardImg01.jpg";
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -18,8 +19,7 @@ const HomePage = () => {
       description: "High-efficiency monocrystalline solar panel.",
       price: 7500,
       slug: "solar-panel-200w",
-      photo:
-        "https://cdn.thewirecutter.com/wp-content/media/2023/03/portable-solar-panels-2048px-goalzero-boulder100briefcase.jpg",
+      photo: cardImg01,
     },
     {
       _id: "2",
@@ -28,8 +28,7 @@ const HomePage = () => {
         "Powerful inverter with Wi-Fi control and battery management.",
       price: 14999,
       slug: "smart-inverter-5kva",
-      photo:
-        "https://cdn.thewirecutter.com/wp-content/media/2022/09/powerinverters-2048px-jackeryexplorer1500-inverter.jpg",
+      photo: cardImg01,
     },
     {
       _id: "3",
@@ -38,8 +37,7 @@ const HomePage = () => {
         "Long-lasting 12V 100Ah lithium battery for home and RV use.",
       price: 21000,
       slug: "lithium-battery-pack",
-      photo:
-        "https://5.imimg.com/data5/SELLER/Default/2023/1/AN/MB/TP/57049600/lithium-battery-pack-1000x1000.jpg",
+      photo: cardImg01,
     },
     {
       _id: "4",
@@ -48,8 +46,7 @@ const HomePage = () => {
         "Long-lasting 12V 100Ah lithium battery for home and RV use.",
       price: 21000,
       slug: "lithium-battery-pack",
-      photo:
-        "https://5.imimg.com/data5/SELLER/Default/2023/1/AN/MB/TP/57049600/lithium-battery-pack-1000x1000.jpg",
+      photo: cardImg01,
     }
   ];
 
@@ -102,18 +99,8 @@ const HomePage = () => {
   }, [page]);
 
   return (
-    <Layout title="All Products - Best Offers">
-      <div className="container py-5">
-        {/* Section Header */}
-        <div className="text-center mb-5">
-          <h2 className="fw-bold text-uppercase">
-            <i className="bi bi-stars text-warning me-2"></i>Our Products
-          </h2>
-          <p className="text-muted mb-0">
-            Explore top deals and trending solar equipment
-          </p>
-        </div>
-
+    <Layout>
+      <div className="container py-1">
         {/* Product Grid */}
         <div className="row g-4 justify-content-center">
           {products?.map((p) => (
@@ -125,9 +112,8 @@ const HomePage = () => {
                 <div className="position-relative">
                   <img
                     src={p.photo || `/api/v1/product/product-photo/${p._id}`}
-                    className="card-img-top rounded-top"
+                    className="card-img-top product-img"
                     alt={p.name}
-                    style={{ height: "200px", objectFit: "cover" }}
                   />
                   <span className="badge bg-warning text-dark position-absolute top-0 end-0 m-2">
                     New
